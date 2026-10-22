@@ -34,12 +34,10 @@
 
 ## 下载
 
-`release/` 里有两个文件，任选其一：
+从 [Releases](https://github.com/sy1lo/mediarouter/releases/latest) 下载，或直接取仓库内 `release/` 目录里的文件。每个版本提供两个：
 
-| 文件 | 说明 |
-|---|---|
-| `MediaRouter_0.3.0_x64-setup.exe` | NSIS 安装包 |
-| `MediaRouter.exe` | 免安装单文件，双击即用 |
+- `MediaRouter_<版本>_x64-setup.exe` —— NSIS 安装包（推荐）
+- `MediaRouter.exe` —— 免安装单文件，双击即用
 
 需要 Windows 10 / 11 x64。WebView2 运行时 Win11 自带，Win10 可能需要单独装一次。
 
