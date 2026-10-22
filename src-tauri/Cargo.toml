@@ -1,0 +1,89 @@
+[package]
+name = "mediarouter"
+version = "0.3.0"
+description = "MediaRouter - 本地媒体库启动器"
+authors = ["MediaRouter"]
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "mediarouter_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7", features = [] }
+
+# 传递依赖修补 —— 必须放在这里，不能只放 [dependencies]。
+# 原因：resolver v2（edition 2021 的默认行为）**不会在「构建依赖」与「普通依赖」
+# 之间合并特性**，而 schemars 0.8 正是从 tauri-build 这条构建依赖链引入的。
+# 完整说明见 [dependencies] 里的同名条目。
+indexmap = { version = "1", default-features = false, features = ["std"] }
+
+[dependencies]
+tauri = { version = "2.12", features = [] }
+tauri-plugin-dialog = "2.8"
+tauri-plugin-opener = "2.6"
+tauri-plugin-clipboard-manager = "2.4"
+# 重复启动时聚焦已有窗口（对齐旧版的 requestSingleInstanceLock）
+tauri-plugin-single-instance = "2"
+
+# 渲染层回传的缩略图是 data:URL，需要解 base64
+base64 = "0.22"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+# 归档读取（epub / zip / cbz）
+# 刻意钉在 2.x：8.x 的 API 与旧版差异较大，这里只需要「按名取条目」这点能力，
+# 用成熟的 2.x 接口可以少一轮编译调试。
+zip = "2"
+
+# 缩略图哈希命名，与 Electron 版保持完全一致的算法
+md-5 = "0.10"
+
+# 用于把系统缩略图的位图编码成 PNG / JPEG（不透明时用 JPEG，体积小一个量级）
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+
+percent-encoding = "2"
+
+# epub 的封面级联全靠正则，这些模式在旧版 JS 里就是正则
+regex = "1"
+
+# 缩略图生成是阻塞逻辑，放进 spawn_blocking，需要信号量控制并发
+tokio = { version = "1", features = ["sync", "rt"] }
+
+# ---- 传递依赖修补（本 crate 并不使用 indexmap，纯粹给上游兜底）----
+#
+# `tauri-build` → `tauri-utils` → `schemars 0.8` 在 `preserve_order` 特性下写的是
+#     pub type Map<K, V> = indexmap::IndexMap<K, V>;      // 只给两个泛型参数
+# 而 indexmap 只在启用 `std` 时第三个参数（hasher）才有默认值：
+#     #[cfg(feature = "std")]      pub struct IndexMap<K, V, S = RandomState>
+#     #[cfg(not(feature = "std"))] pub struct IndexMap<K, V, S>
+#
+# 致命的点：**indexmap 1.9.3 的 [features] 里没有 `default = ["std"]`**（只有 `std = []`），
+# 所以即便别处以默认特性引入它，`std` 也不会被打开 → 编到 no_std 分支 → E0107。
+#
+# 修法：Cargo 的特性取「并集」，只要有一处显式要 `std` 就对该解析单元全局生效。
+# indexmap 1.9 的 build.rs 在 `CARGO_FEATURE_STD` 存在时直接 emit `has_std`，
+# 不走 autocfg 探测，所以这个修法是确定性的、不依赖目标环境。
+#
+# ⚠️ 关键：必须**同时**放在 [build-dependencies] 和 [dependencies]。
+# resolver v2 把「构建依赖」与「普通依赖」分成两个独立解析单元，
+# schemars 从构建依赖链来，走的是 [build-dependencies] 那一份。
+indexmap = { version = "1", default-features = false, features = ["std"] }
+
+[target.'cfg(windows)'.dependencies]
+# 系统缩略图（替换掉旧版的 PowerShell + GDI+ 反射编译方案）
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Gdi",
+  "Win32_System_Com",
+  "Win32_UI_Shell",
+] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

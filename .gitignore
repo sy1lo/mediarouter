@@ -1,0 +1,28 @@
+# ---- 依赖 ----
+node_modules/
+
+# ---- 构建产物 ----
+dist/
+src-tauri/target/
+src-tauri/gen/schemas/
+*.local
+
+# ---- 运行时数据 ----
+# 程序会在 exe 同级建这个目录，存设置、规则、已读记录与缩略图缓存。
+# 属于本机数据，不进仓库。
+MediaRouterData/
+# 本机调试用的运行副本（exe + 上面那份数据）
+green/
+
+# ---- 无头验证的临时产物 ----
+# tools/ 下的脚本**要保留**（那是一条可复用的验证工具链），只忽略运行产物。
+trash/
+
+# ---- 编辑器 ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+
+# ---- 日志 ----
+*.log

@@ -1,0 +1,182 @@
+* {
+  box-sizing: border-box;
+}
+
+/*
+  表单控件默认**不继承** font-family（浏览器用 UA 自己的值，中文环境是 Arial）。
+  后果不只是"字体不一致"：input 的高度由字号度量推导，一旦它在首帧用 Arial 撑出 32px、
+  随后被 CSS 改成 Segoe UI 撑出 34px，它所在的每个容器都会长高 2px —— 整个版面跟着重排。
+  这就是用户反馈的「点一下，整个界面跳一下」的真正来源（实测 `.files-head` 62→64px、
+  `.pane-sticky` 103→105px，两者都只是"包着一个搜索框"而已）。
+  只继承 font-family：字号/行高仍由各处规则自己定，外观一个像素都不动。
+*/
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 13px;
+  /*
+    显式行高，不用 `normal`。
+    原因：`normal` 是按「当前生效字体的度量」算的，而 WebView 首帧用的
+    可能是回退字体（中文环境退到 Arial，度量比 Segoe UI 窄）。
+    等真字体生效时行高会跳变，所有文本行跟着重排 —— 用户看到的就是
+    「点一下，整个界面跳一下」。
+
+    取 1.6 是因为实测 Segoe UI 在 13px 下的 `normal` 正好解析成 20.8px
+    （13 × 1.6），所以这个值**与改动前的观感逐像素一致**，
+    只是把「由字体决定」换成了「由 CSS 决定」，从此与字体加载时序无关。
+  */
+  line-height: 1.6;
+  color: #d6d6e0;
+  background: #0e0e13;
+  overflow: hidden;
+  user-select: none;
+}
+
+.shell {
+  display: flex;
+  height: 100vh;
+  background: #0e0e13;
+}
+
+.shell.light {
+  background: #f2f3f7;
+  color: #2c2c38;
+}
+
+.shell.vscode {
+  background: #1e1e1e;
+  color: #cccccc;
+}
+
+.shell.win11 {
+  background: linear-gradient(180deg, #f6f8fb 0%, #f0f2f5 40%, #edf0f5 100%);
+  color: #1b1b1f;
+  font-family: 'Segoe UI Variable Text', 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei UI', system-ui, sans-serif;
+  padding: 12px;
+  gap: 12px;
+}
+
+.shell.win11 ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.shell.win11 ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 8px;
+}
+
+.shell.win11 ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.32);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------------
+   构成主义（construct）—— 纸白底 + 墨黑结构 + 单点正红
+   ------------------------------------------------------------------
+   形式语言取自俄国构成主义海报：
+   1) 底色是纸的本色（暖白），不是纯白 —— 纯白在 LCD 上会发蓝发刺
+   2) 全直角：border-radius 一律压到 0~2px，构成主义没有圆角
+   3) 黑是硬的（#1a1a1a），不是柔灰 —— 线条要有印刷油墨的重量
+   4) 红只在一处出现（选中/强调），其余靠黑白的明度层次撑结构
+   5) 背景铺一层极淡的纵向网格，暗示"构成"的骨架而不喧宾夺主
+   6) 字体走无衬线收紧字距 —— 构成主义排版要的是效率和秩序，不是优雅
+
+   注：以下令牌在 .shell.win11 之后声明。两者特异性同为 (0,2,0)，
+   按后声明者胜出 —— 所以 construct 会正确覆盖 win11 的圆角与字族。
+   主题类名是互斥的，不存在同时挂两个的情况。
+------------------------------------------------------------------ */
+.shell.construct {
+  background-color: #f3f0e9;
+  /* 纵向网格：28px 一条，极淡。构成主义讲"构成"，画面上该有骨架 */
+  background-image: linear-gradient(90deg, rgba(26, 26, 26, 0.045) 1px, transparent 1px);
+  background-size: 28px 100%;
+  color: #1a1a1a;
+  font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* 直角化：把残留的圆角统一摁平 */
+.shell.construct ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.shell.construct ::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 0;
+  /* 细黑条 —— 不做 Windows 那种胶囊滑块 */
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.shell.construct ::-webkit-scrollbar-thumb:hover {
+  background: #d42a1e;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.shell.construct ::selection {
+  background: #d42a1e;
+  color: #f3f0e9;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 170, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 140, 170, 0.45);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.empty-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #77778c;
+  font-size: 14px;
+}
+
+.shell.light .empty-tip {
+  color: #9a9aad;
+}
+
+.shell.vscode .empty-tip {
+  color: #8a8a8a;
+}
+
+.shell.win11 .empty-tip {
+  color: #8a8a90;
+}
+
+.shell.construct .empty-tip {
+  color: #8a8579;
+}

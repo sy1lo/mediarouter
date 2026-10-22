@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediaRouter</title>
+    <!--
+      CSP 由 src-tauri/tauri.conf.json 的 app.security.csp 统一注入，
+      这里不再重复声明，避免两处规则叠加后难以排查。
+    -->
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

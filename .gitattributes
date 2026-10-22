@@ -1,0 +1,12 @@
+# 统一换行符：源码一律 LF，避免 Windows 检出后再提交产生"整文件变更"的幻觉 diff
+* text=auto eol=lf
+
+# 二进制，不要做任何文本转换
+*.exe    binary
+*.ico    binary
+*.icns   binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
