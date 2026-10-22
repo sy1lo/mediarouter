@@ -4,7 +4,7 @@
 
 扫描几个本地目录，聚合成作品集；点开文件时，按「分类 + 扩展名」的规则交给指定的播放器 / 阅读器打开。
 
-![媒体库](docs/screenshots/library-anime.png)
+![媒体库](docs/screenshots/main.png)
 
 ## 它解决什么
 
@@ -30,7 +30,7 @@
 
 | 图片分类 · 平铺照片墙 | 路由规则 |
 |:--:|:--:|
-| ![图片](docs/screenshots/library-images.jpg) | ![规则](docs/screenshots/rules.png) |
+| ![图片](docs/screenshots/image-wall.jpg) | ![规则](docs/screenshots/routing.png) |
 
 ## 下载
 
