@@ -30,7 +30,7 @@
 
 | 图片分类 · 平铺照片墙 | 路由规则 |
 |:--:|:--:|
-| ![图片](docs/screenshots/library-images.png) | ![规则](docs/screenshots/rules.png) |
+| ![图片](docs/screenshots/library-images.jpg) | ![规则](docs/screenshots/rules.png) |
 
 ## 下载
 
